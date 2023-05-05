@@ -15,12 +15,12 @@ class NotesView {
   addUserNote() {
     const inputField = document.querySelector('#note-input')
     const note = inputField.value
+    console.log(note);
     this.model.addNote(note);
+    this.client.createNote(note);
     // clear the input field
     inputField.value = null;
-    // this.clearNotes();
     this.displayNotes();
-
   }
 
   clearNotes() {

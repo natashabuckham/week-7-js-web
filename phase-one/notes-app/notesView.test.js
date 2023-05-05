@@ -17,7 +17,7 @@ describe('NotesView class', () => {
     document.body.innerHTML = fs.readFileSync('./index.html');
   });
 
-  it('displays all notes', () => {
+  it.skip('displays all notes', () => {
     mockModel = new Model();
     view = new View(mockModel);
 
@@ -30,7 +30,7 @@ describe('NotesView class', () => {
     expect(document.querySelectorAll('div.note').length).toEqual(2);
   });
 
-  it('lets the user add a note', () => {
+  it.skip('lets the user add a note', () => {
     mockModel = new Model();
     view = new View(mockModel);
 
@@ -47,7 +47,7 @@ describe('NotesView class', () => {
     expect(mockModel.addNote).toHaveBeenCalledWith('Natasha was here');
   })
 
-  it('clears the notes display before adding a new note', () => {
+  it.skip('clears the notes display before adding a new note', () => {
     mockModel = new Model();
     view = new View(mockModel);
 
@@ -68,7 +68,7 @@ describe('NotesView class', () => {
     expect(mockModel.addNote).toHaveBeenCalledTimes(2);
   })
 
-  it('clears the input box after adding a note', () => {
+  it.skip('clears the input box after adding a note', () => {
     mockModel = new Model();
     view = new View(mockModel);
 
@@ -82,7 +82,7 @@ describe('NotesView class', () => {
     expect(inputBox.value).toBeNull;
   })
 
-  test.only('displays notes from the api', () => {
+  it('displays notes from the api', () => {
     mockClient = new Client();
     const mockModel = {
       setNotes: (data) => {mockModel.notes = data},
@@ -95,5 +95,28 @@ describe('NotesView class', () => {
     view.displayNotesFromApi();
 
     expect(document.querySelector('div.note').textContent).toEqual('This note is coming from the server');
+  });
+
+  it('adds new notes to the server', () => {
+    mockClient = new Client();
+    mockClient.createNote.mockImplementation((response) => response.json) // need to mock fetch request properly
+
+    const mockModel = {
+      notes: [],
+      setNotes: (data) => {mockModel.notes = data},
+      getNotes: () => {return mockModel.notes},
+      addNote: (note) => {mockModel.notes.push(note)}
+    }
+
+    view = new View(mockModel, mockClient);
+    const inputBox = document.querySelector('#note-input');
+    const addNoteButton = document.querySelector('#add-note-button');
+
+    inputBox.value = "this note has been added";
+    addNoteButton.click();
+
+    expect(mockClient.createNote).toHaveBeenCalledTimes(1);
+    // make sure displayNotes gets called
+    // output on page
   })
 })

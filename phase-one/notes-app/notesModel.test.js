@@ -20,4 +20,10 @@ describe('NotesModel class', () => {
     model.reset('');
     expect(model.getNotes()).toEqual([]);
   });
+
+  it('sets the notes from the backend to the notes model', () => {
+    const model = new NotesModel;
+    model.setNotes(['This note is coming from the server', 'so is this one']);
+    expect(model.getNotes()).toEqual(['This note is coming from the server', 'so is this one']);
+  });
 });

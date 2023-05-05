@@ -17,7 +17,9 @@ class NotesModel {
   }
 
   setNotes(notes) {
-    this.notes.push(notes);
+    notes.forEach((note) => {
+      this.notes.push(note)
+    })
   }
 }
 

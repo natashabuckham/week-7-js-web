@@ -3,9 +3,13 @@ const NotesClient = require('./notesClient');
 // This makes `fetch` available to our test
 // (it is not by default, as normally `fetch` is only
 // available within the browser)
-require('jest-fetch-mock').enableMocks()
+require('jest-fetch-mock').enableMocks();
 
 describe('Client class', () => {
+  beforeEach(() => {
+    fetch.resetMocks();
+  });
+
   it('calls fetch and loads data', (done) => {
     // 1. Instantiate the class
     const client = new NotesClient();
@@ -29,5 +33,22 @@ describe('Client class', () => {
       // 4. Tell Jest our test can now end.
       done();
     });
+  });
+
+  it('sends a POST request to the notes backend to create a new note', (done) => {
+    const client = new NotesClient();
+
+    fetch.mockResponseOnce(JSON.stringify({
+      content: 'Remember to reflect on my progress this week!'
+    }));
+
+    client.createNote('Remember to reflect on my progress this week!')
+    .then(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(fetchMock.mock.calls[0][0]).toBe('http://localhost:3000/notes');
+      // jest fetch mocks to post request - check that the body has been sent
+    });
+
+    done();
   });
 });
