@@ -1,6 +1,7 @@
 class NotesView {
-  constructor(modelInstance) {
+  constructor(modelInstance, client = null) {
     this.model = modelInstance;
+    this.client = client;
     this.noteInputListener();
   }
 
@@ -19,7 +20,7 @@ class NotesView {
     inputField.value = null;
     // this.clearNotes();
     this.displayNotes();
-    
+
   }
 
   clearNotes() {
@@ -39,6 +40,15 @@ class NotesView {
       noteElement.textContent = note;
       document.querySelector('body').append(noteElement);
     });
+  }
+
+  displayNotesFromApi() {
+    this.client.loadNotes(
+      (data) => {
+        this.model.setNotes(data);
+        this.displayNotes();
+      }
+    );
   }
 }
 

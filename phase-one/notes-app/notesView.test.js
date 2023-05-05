@@ -5,12 +5,15 @@
 const fs = require('fs');
 const View = require('./notesView');
 const Model = require('./notesModel');
+const Client = require('./notesClient');
 
-jest.mock('./notesModel.js');
+// jest.mock('./notesModel.js');
+jest.mock('./notesClient.js')
 
 describe('NotesView class', () => {
   beforeEach(() => {
-    Model.mockClear();
+    // Model.mockClear();
+    Client.mockClear();
     document.body.innerHTML = fs.readFileSync('./index.html');
   });
 
@@ -77,5 +80,20 @@ describe('NotesView class', () => {
     addNoteButton.click();
 
     expect(inputBox.value).toBeNull;
+  })
+
+  test.only('displays notes from the api', () => {
+    mockClient = new Client();
+    const mockModel = {
+      setNotes: (data) => {mockModel.notes = data},
+      getNotes: () => {return mockModel.notes}
+    }
+
+    mockClient.loadNotes.mockImplementation((callback) => callback(['This note is coming from the server']));
+
+    view = new View(mockModel, mockClient);
+    view.displayNotesFromApi();
+
+    expect(document.querySelector('div.note').textContent).toEqual('This note is coming from the server');
   })
 })
