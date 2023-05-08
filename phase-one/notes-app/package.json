@@ -13,5 +13,8 @@
   "dependencies": {
     "jest-environment-jsdom": "^29.5.0",
     "jest-fetch-mock": "^3.0.3"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5"
   }
 }

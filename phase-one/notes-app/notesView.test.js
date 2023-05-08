@@ -2,6 +2,8 @@
 * @jest-environment jsdom
 */
 
+require('@testing-library/jest-dom/extend-expect'); // need to require this to use the jest DOM matchers
+
 const fs = require('fs');
 const View = require('./notesView');
 const Model = require('./notesModel');
@@ -97,9 +99,10 @@ describe('NotesView class', () => {
     expect(document.querySelector('div.note').textContent).toEqual('This note is coming from the server');
   });
 
-  it('adds new notes to the server', () => {
+  it('adds new notes to the server', (done) => {
     mockClient = new Client();
-    mockClient.createNote.mockImplementation((response) => response.json) // need to mock fetch request properly
+    const mockResponse = { content: "this note has been added" };
+    mockClient.createNote.mockImplementation(() => Promise.resolve(mockResponse)) // need to mock fetch request properly
 
     const mockModel = {
       notes: [],
@@ -115,8 +118,14 @@ describe('NotesView class', () => {
     inputBox.value = "this note has been added";
     addNoteButton.click();
 
+    const element = document.querySelector('div.note');
+
     expect(mockClient.createNote).toHaveBeenCalledTimes(1);
+    expect(mockClient.createNote.mock.calls[0][0]).toEqual('this note has been added');
     // make sure displayNotes gets called
-    // output on page
+    // testing the output on page with Jest DOM matchers (see necessary require at top of file)
+    expect(element).toBeInTheDocument();
+    expect(element).toHaveTextContent('this note has been added');
+    done();
   })
 })
