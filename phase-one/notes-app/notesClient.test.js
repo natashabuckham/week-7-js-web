@@ -46,7 +46,8 @@ describe('Client class', () => {
     .then(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock.mock.calls[0][0]).toBe('http://localhost:3000/notes');
-      // jest fetch mocks to post request - check that the body has been sent
+      expect(fetchMock.mock.calls[0][1].method).toEqual('POST');
+      expect(fetchMock.mock.calls[0][1].body).toEqual(JSON.stringify({ content: 'Remember to reflect on my progress this week!' }));
     });
 
     done();
